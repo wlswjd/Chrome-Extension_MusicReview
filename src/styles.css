@@ -1,0 +1,1451 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'DM Sans', 'Noto Sans KR', sans-serif;
+  color: #361822;
+  background: #ece4e2;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --burgundy-900: #3d0e1e;
+  --burgundy-800: #5b172b;
+  --burgundy-700: #732239;
+  --burgundy-600: #8c324b;
+  --burgundy-500: #a64d64;
+  --rose-300: #dcb8c0;
+  --rose-200: #edd8dd;
+  --rose-100: #f7ecef;
+  --rose-50: #fcf7f8;
+  --cream-bg: #fbf8f6;
+  --paper: #fffdfa;
+  --text-main: #381622;
+  --text-sub: #7a5862;
+  --text-muted: #a4878f;
+  --border-soft: #eadadd;
+  --border-accent: #cca3ad;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 320px;
+  height: 600px;
+  overflow: hidden;
+  background: var(--cream-bg);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  color: inherit;
+}
+
+/* 320 x 600 고정 확장프로그램 쉘 */
+.app-shell {
+  width: 320px;
+  height: 600px;
+  margin: 0 auto;
+  padding: 11px 14px 10px;
+  background: var(--cream-bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 상단 바: 좌측 브랜드(HeeMusic_icon) + 우측 설정 아이콘 */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1px 8px;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+}
+
+.brand-logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 7px rgba(91, 23, 43, 0.2);
+}
+
+.brand-text b {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 800;
+  letter-spacing: 2.4px;
+  color: var(--burgundy-800);
+  line-height: 1.05;
+}
+
+.brand-text small {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.settings-button {
+  position: relative;
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  border: 1px solid var(--rose-200);
+  background: #fff9fa;
+  color: var(--burgundy-600);
+  display: grid;
+  place-items: center;
+  transition: all 0.16s ease;
+}
+
+.settings-button:hover,
+.settings-button.active {
+  background: var(--burgundy-800);
+  border-color: var(--burgundy-800);
+  color: #fff6f2;
+}
+
+.settings-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #d95f76;
+}
+
+/* 3개 탭 네비게이션 */
+.main-nav {
+  display: grid;
+  grid-template-columns: 0.9fr 1fr 1.25fr;
+  border-top: 1px solid var(--border-soft);
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 9px;
+  flex-shrink: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 2px 6px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-item:hover {
+  color: var(--burgundy-700);
+}
+
+.nav-item.active {
+  color: var(--burgundy-800);
+  border-bottom-color: var(--burgundy-800);
+}
+
+/* 메인 컨텐츠 영역 */
+.page-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #dec4ca transparent;
+}
+
+.page-content::-webkit-scrollbar {
+  width: 3px;
+}
+
+.page-content::-webkit-scrollbar-thumb {
+  background: #dec4ca;
+  border-radius: 4px;
+}
+
+/* ==========================================
+   탭 1: TODAY
+   - 상단: 오늘의 앨범 타이틀 + [세트리스트/앨범 메인 스왑 버튼] + [편집하기]
+   - 중단(스왑 스테이지): 사진처럼 큼직한 앨범 메인 카드 <-> 세트리스트 카드
+   - 하단: 바로 이번 음악에 대한 리뷰
+========================================== */
+.today-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.today-top-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.today-heading .overline {
+  display: block;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: #a17b84;
+  margin-bottom: 2px;
+}
+
+.today-heading h1 {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  color: #401422;
+  line-height: 1.1;
+}
+
+.today-heading h1 span {
+  color: #a34a62;
+}
+
+.today-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swap-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #dcc0c7;
+  background: #fff8f9;
+  color: var(--burgundy-800);
+  font-size: 8.5px;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.swap-view-btn:hover,
+.swap-view-btn.active {
+  background: var(--burgundy-800);
+  border-color: var(--burgundy-800);
+  color: #fff6f2;
+}
+
+.edit-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 0;
+  background: transparent;
+  color: #96616e;
+  font-size: 8.5px;
+  font-weight: 600;
+  padding: 3px 2px;
+}
+
+.edit-link-btn:hover {
+  color: var(--burgundy-800);
+}
+
+/* 스왑 스테이지 (높이 고정으로 흔들림 없이 전환) */
+.swappable-stage {
+  height: 304px;
+  flex-shrink: 0;
+}
+
+/* 1) 앨범 메인 히어로 카드 (첨부 이미지 좌측 스타일) */
+.hero-album-card {
+  height: 100%;
+  border-radius: 8px;
+  padding: 12px 14px 11px;
+  background: linear-gradient(125deg, #4b1023 0%, #6c2036 64%, #7c3043 100%);
+  color: #f8eee7;
+  box-shadow: 0 7px 18px rgba(88, 24, 43, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  animation: swap-fade 0.18s ease;
+}
+
+.hero-album-card::after {
+  content: "";
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  right: -70px;
+  top: -105px;
+  box-shadow: 0 0 0 18px rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
+
+/* 큼직한 정사각형 앨범 사진 영역 */
+.hero-cover-square {
+  width: 176px;
+  height: 176px;
+  margin: 0 auto;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(20, 4, 11, 0.42);
+  cursor: pointer;
+  flex-shrink: 0;
+  background: linear-gradient(140deg, #c9b9a3, #f1e6d3 42%, #9e877d);
+}
+
+.hero-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.22s ease;
+}
+
+.hero-cover-square:hover .hero-cover-img {
+  transform: scale(1.03);
+}
+
+/* 기본 앨범 포스터 (첨부 사진 속 골드/베이지 LP 포스터 감성) */
+.hero-cover-poster {
+  width: 100%;
+  height: 100%;
+  padding: 11px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  color: #402b2d;
+  position: relative;
+  isolation: isolate;
+}
+
+.poster-topline {
+  font-size: 6.5px;
+  letter-spacing: 1.3px;
+  font-weight: 600;
+  color: #54383b;
+}
+
+.poster-vinyl-ring {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #6e3b47;
+  opacity: 0.42;
+  z-index: -1;
+}
+
+.poster-title {
+  font-family: Georgia, serif;
+  font-size: 13.5px;
+  line-height: 1.22;
+  font-weight: 500;
+  color: #3a1f24;
+  text-shadow: 0 1px 0 rgba(255, 248, 238, 0.8);
+  padding: 0 4px;
+}
+
+.poster-bottom {
+  font-size: 6px;
+  letter-spacing: 0.9px;
+  color: #5a3f42;
+}
+
+/* 커버 우측 하단 플로팅 세트리스트 전환 버튼 */
+.floating-swap-pill {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3.5px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(52, 12, 25, 0.82);
+  backdrop-filter: blur(4px);
+  color: #fff5ef;
+  font-size: 7.5px;
+  font-weight: 700;
+}
+
+.floating-swap-pill:hover {
+  background: #2f0915;
+}
+
+/* 하단 앨범 텍스트 메타 영역 */
+.hero-meta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1;
+}
+
+.hero-kicker-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 7.5px;
+  letter-spacing: 1.3px;
+  color: #e5c4c7;
+  margin-bottom: 1px;
+}
+
+.hero-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e5a6a9;
+  box-shadow: 0 0 0 2.5px rgba(255, 255, 255, 0.12);
+}
+
+.hero-album-title {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.22;
+  letter-spacing: -0.4px;
+  color: #fff6ef;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-artist-name {
+  margin: 0 0 3px;
+  font-size: 10px;
+  color: #e2c6c6;
+  letter-spacing: 0.3px;
+}
+
+.hero-meta-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8.5px;
+  color: #d7b5bb;
+}
+
+.dot-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #d5a5af;
+}
+
+.hero-meta-line.sub {
+  margin-top: 1px;
+}
+
+.meta-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-sep {
+  color: #a97a84;
+}
+
+.tracks-jump-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #f3d8dc;
+  font-size: 8.5px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 2) 세트리스트 스왑 카드 (첨부 이미지 우측 화이트/크림 카드 스타일) */
+.setlist-swap-card {
+  height: 100%;
+  background: var(--paper);
+  border: 1px solid #eee3df;
+  border-radius: 8px;
+  padding: 12px 13px 10px;
+  box-shadow: 0 6px 18px rgba(77, 24, 39, 0.07);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: swap-fade 0.18s ease;
+}
+
+@keyframes swap-fade {
+  from {
+    opacity: 0.65;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.setlist-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #f2e9e6;
+  flex-shrink: 0;
+}
+
+.setlist-kicker {
+  display: block;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: #a17b84;
+  margin-bottom: 2px;
+}
+
+.setlist-card-head h3 {
+  margin: 0;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #481a29;
+  letter-spacing: -0.3px;
+}
+
+.setlist-card-head h3 span {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  color: #b9a1a2;
+  margin-left: 3px;
+}
+
+.setlist-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.back-to-cover-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3.5px 7px;
+  border-radius: 999px;
+  border: 1px solid #e6d3d6;
+  background: #fdf6f7;
+  color: var(--burgundy-800);
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.back-to-cover-btn:hover {
+  background: var(--burgundy-800);
+  border-color: var(--burgundy-800);
+  color: #fff;
+}
+
+.icon-edit-btn {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #a17d84;
+  display: grid;
+  place-items: center;
+}
+
+.icon-edit-btn:hover {
+  background: #f6e9e6;
+  color: var(--burgundy-800);
+}
+
+.setlist-scroll-list {
+  list-style: none;
+  margin: 0;
+  padding: 2px 0;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.setlist-scroll-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5.5px 4px;
+  border-bottom: 1px solid #f4ece9;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.12s ease;
+}
+
+.setlist-scroll-list li:hover {
+  background: #faf1ef;
+}
+
+.setlist-scroll-list li.active {
+  background: #f5e3e6;
+}
+
+.t-num {
+  font-size: 8.5px;
+  color: #bca5a6;
+  width: 15px;
+  flex-shrink: 0;
+}
+
+.setlist-scroll-list li.active .t-num {
+  color: var(--burgundy-800);
+  font-weight: 700;
+}
+
+.t-name {
+  font-size: 9.5px;
+  color: #58464a;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.setlist-scroll-list li.active .t-name {
+  color: var(--burgundy-800);
+  font-weight: 700;
+}
+
+.setlist-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 7px;
+  border-top: 1px solid #f2e9e6;
+  color: #aa9295;
+  font-size: 7.5px;
+  letter-spacing: 0.8px;
+  flex-shrink: 0;
+}
+
+.setlist-card-foot span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 하단: 이번 음악에 대한 리뷰 카드 */
+.review-bottom-card {
+  flex: 1;
+  min-height: 0;
+  background: var(--paper);
+  border: 1px solid #eadadd;
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-shadow: 0 4px 12px rgba(77, 24, 39, 0.05);
+}
+
+.review-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.review-title-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.review-icon-badge {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--burgundy-800);
+  color: #fff5f2;
+  display: grid;
+  place-items: center;
+}
+
+.review-title-left h3 {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--burgundy-800);
+  letter-spacing: -0.2px;
+}
+
+.review-edit-trigger {
+  border: 0;
+  background: transparent;
+  color: var(--text-sub);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 4px;
+}
+
+.review-edit-trigger:hover {
+  color: var(--burgundy-800);
+}
+
+.review-note-surface {
+  flex: 1;
+  min-height: 0;
+  border: 1px dashed #dbb8c0;
+  background: linear-gradient(180deg, #fdf7f8 0%, #f9eff1 100%);
+  border-radius: 6px;
+  padding: 7px 9px 14px;
+  position: relative;
+  overflow-y: auto;
+  cursor: pointer;
+}
+
+.review-body-text {
+  margin: 0;
+  font-family: 'Gaegu', 'Noto Sans KR', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.42;
+  color: #4c212f;
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+
+.review-star-mark {
+  position: absolute;
+  right: 7px;
+  bottom: 4px;
+  color: var(--burgundy-500);
+  opacity: 0.75;
+}
+
+.review-editor-surface {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #fdf6f7;
+  border: 1px solid var(--burgundy-600);
+  border-radius: 6px;
+  padding: 6px;
+}
+
+.review-editor-surface textarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 9px;
+  line-height: 1.45;
+  color: var(--text-main);
+}
+
+.review-editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-editor-bar small {
+  font-size: 7.5px;
+  color: var(--text-muted);
+}
+
+.review-editor-bar > div {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-ghost,
+.btn-burgundy {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3.5px 7px;
+  border-radius: 5px;
+  font-size: 8px;
+  font-weight: 700;
+  border: 1px solid var(--rose-200);
+  background: #fff;
+  color: var(--burgundy-700);
+}
+
+.btn-burgundy {
+  background: var(--burgundy-800);
+  border-color: var(--burgundy-800);
+  color: #fff6f3;
+}
+
+/* ==========================================
+   탭 2 (RELEASES) & 탭 3 (LIVE & TICKETS)
+========================================== */
+.tab-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 4px;
+}
+
+.tab-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.kicker {
+  display: block;
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--burgundy-500);
+  margin-bottom: 2px;
+}
+
+.tab-head h2,
+.settings-head h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--burgundy-800);
+  letter-spacing: -0.4px;
+}
+
+.sync-pill,
+.close-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--rose-200);
+  background: #fff9fa;
+  color: var(--burgundy-700);
+  font-size: 8.5px;
+  font-weight: 700;
+}
+
+.sync-pill:hover,
+.close-pill:hover {
+  background: var(--burgundy-800);
+  border-color: var(--burgundy-800);
+  color: #fff;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.compact-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+}
+
+.compact-search input {
+  border: 0;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 9.5px;
+  color: var(--text-main);
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schedule-card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 2px 8px rgba(91, 23, 43, 0.04);
+}
+
+.schedule-date-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #f5dfe4, #ecd0d7);
+  color: var(--burgundy-800);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.schedule-date-badge b {
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.schedule-date-badge small {
+  font-size: 7.5px;
+  opacity: 0.75;
+}
+
+.schedule-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.schedule-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.tag-badge {
+  font-size: 7.5px;
+  font-weight: 700;
+  padding: 1.5px 5px;
+  border-radius: 4px;
+  background: var(--rose-100);
+  color: var(--burgundy-700);
+}
+
+.tag-genre {
+  font-size: 7.5px;
+  color: var(--text-muted);
+}
+
+.schedule-body h3 {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--burgundy-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-body p {
+  margin: 1px 0 0;
+  font-size: 8.5px;
+  color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bell-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border-soft);
+  background: var(--rose-50);
+  color: var(--text-muted);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.bell-btn.on {
+  background: var(--burgundy-800);
+  border-color: var(--burgundy-800);
+  color: #fff6f3;
+}
+
+/* 콘서트 리스트 */
+.concert-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.concert-item-card {
+  padding: 10px 11px;
+  border-radius: 10px;
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 2px 8px rgba(91, 23, 43, 0.04);
+}
+
+.concert-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.concert-status-pill {
+  font-size: 7.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #f3dfe4;
+  color: var(--burgundy-800);
+}
+
+.concert-item-card h3 {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--burgundy-900);
+}
+
+.concert-sub {
+  margin: 2px 0 7px;
+  font-size: 8.5px;
+  color: var(--text-sub);
+  line-height: 1.35;
+}
+
+.concert-info-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.concert-info-rows span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 8.5px;
+  color: var(--text-sub);
+}
+
+.concert-info-rows svg {
+  color: var(--burgundy-600);
+}
+
+.concert-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.platform-label {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.concert-footer-row a {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--burgundy-800);
+  text-decoration: none;
+}
+
+.concert-footer-row a:hover {
+  text-decoration: underline;
+}
+
+.api-footnote {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 2px 0 0;
+  font-size: 8px;
+  color: var(--text-muted);
+}
+
+.api-footnote svg {
+  color: var(--burgundy-500);
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   설정 화면 (Settings View)
+========================================== */
+.settings-card {
+  background: var(--paper);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 12px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.settings-section-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--burgundy-800);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 9px;
+  border-radius: 8px;
+  background: var(--rose-50);
+  border: 1px solid var(--border-soft);
+  cursor: pointer;
+}
+
+.toggle-row.master {
+  background: linear-gradient(135deg, #f9eaee, #f3dde3);
+  border-color: #dfbec7;
+}
+
+.toggle-row.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggle-row b {
+  display: block;
+  font-size: 9.5px;
+  color: var(--burgundy-900);
+}
+
+.toggle-row small {
+  display: block;
+  font-size: 7.5px;
+  color: var(--text-sub);
+  margin-top: 2px;
+}
+
+.toggle-row input {
+  display: none;
+}
+
+.switch {
+  width: 30px;
+  height: 17px;
+  border-radius: 999px;
+  background: #d7bfc5;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.18s ease;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.18s ease;
+}
+
+.toggle-row input:checked + .switch {
+  background: var(--burgundy-800);
+}
+
+.toggle-row input:checked + .switch::after {
+  transform: translateX(13px);
+}
+
+/* ==========================================
+   모달 (앨범 API 검색 / 직접 편집)
+========================================== */
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgba(45, 10, 22, 0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10px;
+}
+
+.modal-sheet {
+  width: 100%;
+  max-height: 92%;
+  background: var(--paper);
+  border: 1px solid var(--rose-200);
+  border-radius: 12px;
+  padding: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 12px 32px rgba(38, 8, 18, 0.35);
+  overflow: hidden;
+}
+
+.modal-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-sheet-header h3 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--burgundy-800);
+}
+
+.header-icon-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1px solid var(--rose-200);
+  background: var(--rose-50);
+  color: var(--burgundy-700);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.modal-tabs.two-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: var(--rose-100);
+  padding: 3px;
+  border-radius: 7px;
+}
+
+.modal-tabs button {
+  border: 0;
+  border-radius: 5px;
+  padding: 5px 4px;
+  font-size: 8.5px;
+  font-weight: 700;
+  background: transparent;
+  color: var(--text-sub);
+}
+
+.modal-tabs button.active {
+  background: var(--burgundy-800);
+  color: #fff;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow-y: auto;
+  max-height: 390px;
+}
+
+.api-search-bar {
+  display: flex;
+  gap: 5px;
+}
+
+.api-search-bar input {
+  flex: 1;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 9.5px;
+}
+
+.api-result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.empty-hint {
+  margin: 12px 0;
+  font-size: 8.5px;
+  line-height: 1.5;
+  color: var(--text-sub);
+  text-align: center;
+}
+
+.api-result-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 7px;
+  border: 1px solid var(--border-soft);
+  background: var(--rose-50);
+  text-align: left;
+}
+
+.api-result-item:hover {
+  border-color: var(--burgundy-600);
+  background: var(--rose-100);
+}
+
+.api-result-item img {
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.api-result-item div {
+  min-width: 0;
+  flex: 1;
+}
+
+.api-result-item b {
+  display: block;
+  font-size: 9.5px;
+  color: var(--burgundy-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.api-result-item small {
+  display: block;
+  font-size: 8px;
+  color: var(--text-sub);
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.modal-field span {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--text-sub);
+}
+
+.modal-field input,
+.modal-field textarea {
+  width: 100%;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 5px 7px;
+  font-size: 9px;
+  color: var(--text-main);
+  background: #fff;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+
+/* 토스트 알림 */
+.toast {
+  position: absolute;
+  z-index: 40;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: var(--burgundy-900);
+  color: #fff7f4;
+  font-size: 8.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(38, 8, 18, 0.3);
+}
+
+/* 브라우저 탭에서 미리보기 시 중앙 정렬 프레임 */
+@media (min-width: 340px) {
+  html,
+  body {
+    width: 100%;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #2b2427;
+  }
+
+  .app-shell {
+    border-radius: 8px;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  }
+}
